@@ -287,12 +287,7 @@ class Score
       first_indexes = find_char_in_string(string, first_char)
 
       first_indexes.map do |first_index|
-        last_index = find_end_of_match(string, rest, first_index)
-        if last_index
-          last_index - first_index + 1
-        else
-          nil
-        end
+        find_match_length(string, rest, first_index)
       end.compact.min
     end
 
@@ -311,14 +306,16 @@ class Score
     end
 
     # Find each of the characters in the string, moving strictly left to right.
-    def find_end_of_match(string, chars, first_index)
+    def find_match_length(string, chars, first_index)
+      length = 1
       last_index = first_index
       chars.each do |this_char|
         index = string.index(this_char, last_index + 1)
         return nil unless index
+        length += index - last_index
         last_index = index
       end
-      last_index
+      length
     end
   end
 end
