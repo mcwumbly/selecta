@@ -309,13 +309,6 @@ class Score
         return 0
       end
       this_char, rest = chars[0], chars[1..-1]
-      boundary = begin
-                   index = string.index(/\b#{this_char}/, start)
-                   if index
-                     score = find_match_length(string, rest, index + 1)
-                     score
-                   end
-                 end
       non_boundary = begin
                        index = string.index(this_char, start)
                        if index
@@ -326,6 +319,15 @@ class Score
                          end
                        end
                      end
+      if non_boundary
+        boundary = begin
+                     index = string.index(/\b#{this_char}/, start)
+                     if index
+                       score = find_match_length(string, rest, index + 1)
+                       score
+                     end
+                   end
+      end
       scores = [boundary, non_boundary].compact
       scores.min
     end
