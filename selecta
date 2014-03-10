@@ -323,8 +323,7 @@ class Score
         boundary = begin
                      index = string.index(/\b#{this_char}/, start)
                      if index
-                       score = find_match_length(string, rest, index + 1)
-                       score
+                       find_match_length(string, rest, index + 1)
                      end
                    end
       end
