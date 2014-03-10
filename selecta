@@ -268,17 +268,15 @@ end
 class Score
   class << self
     def score(choice, query)
-      return 1.0 if query.length == 0
-      return 0.0 if choice.length == 0
+      return 0.0 if query.length == 0
+      return Float::INFINITY if choice.length == 0
 
       choice = choice.downcase
       query = query.downcase
 
-      match_length = compute_match_length(choice, query.each_char.to_a)
-      return 0.0 unless match_length
-
-      # Penalize longer matches.
-      score = query.length.to_f / match_length.to_f
+      match_length = compute_match_length(choice, query)
+      return Float::INFINITY unless match_length
+      match_length
     end
 
     # Find the length of the shortest substring matching the given characters.
@@ -287,7 +285,7 @@ class Score
       first_indexes = find_char_in_string(string, first_char)
 
       first_indexes.map do |first_index|
-        find_match_length(string, rest, first_index)
+        find_match_length(string, chars, first_index)
       end.compact.min
     end
 
@@ -306,16 +304,36 @@ class Score
     end
 
     # Find each of the characters in the string, moving strictly left to right.
-    def find_match_length(string, chars, first_index)
-      length = 1
-      last_index = first_index
-      chars.each do |this_char|
-        index = string.index(this_char, last_index + 1)
-        return nil unless index
-        length += index - last_index
-        last_index = index
+    def find_match_length(string, chars, start)
+      if chars.empty?
+        return 0
       end
-      length
+      this_char, rest = chars[0], chars[1..-1]
+      p ["find_match_length", string, chars, start]
+      #boundary = begin
+      #             index = string.index(/\b#{this_char}/, start)
+      #             p ["found boundary", index]
+      #             if index
+      #               score = find_match_length(string, rest, index + 1)
+      #               p ["score", score]
+      #               score
+      #             end
+      #           end
+      non_boundary = begin
+                       index = string.index(this_char, start)
+                       p ["found non-boundary", index]
+                       if index
+                         score = find_match_length(string, rest, index + 1)
+                         p ["score", score]
+                         if score
+                           this_score = index == 0 ? 1 : index - start + 1
+                           this_score + score
+                         end
+                       end
+                     end
+      #scores = [boundary, non_boundary].compact
+      #p ["scores", scores]
+      #scores.min
     end
   end
 end
