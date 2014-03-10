@@ -309,31 +309,25 @@ class Score
         return 0
       end
       this_char, rest = chars[0], chars[1..-1]
-      p ["find_match_length", string, chars, start]
-      #boundary = begin
-      #             index = string.index(/\b#{this_char}/, start)
-      #             p ["found boundary", index]
-      #             if index
-      #               score = find_match_length(string, rest, index + 1)
-      #               p ["score", score]
-      #               score
-      #             end
-      #           end
+      boundary = begin
+                   index = string.index(/\b#{this_char}/, start)
+                   if index
+                     score = find_match_length(string, rest, index + 1)
+                     score
+                   end
+                 end
       non_boundary = begin
                        index = string.index(this_char, start)
-                       p ["found non-boundary", index]
                        if index
                          score = find_match_length(string, rest, index + 1)
-                         p ["score", score]
                          if score
                            this_score = index == 0 ? 1 : index - start + 1
                            this_score + score
                          end
                        end
                      end
-      #scores = [boundary, non_boundary].compact
-      #p ["scores", scores]
-      #scores.min
+      scores = [boundary, non_boundary].compact
+      scores.min
     end
   end
 end

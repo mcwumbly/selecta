@@ -48,8 +48,13 @@ describe "score" do
     end
 
     it "is case insensitive" do
-      score("a", "A").should == 1.0
-      score("A", "a").should == 1.0
+      x = score("a", "a")
+      y = score("a", "A")
+      z = score("A", "a")
+      w = score("A", "A")
+      x.should == y
+      y.should == z
+      z.should == w
     end
 
     it "doesn't match when the same letter is repeated in the choice" do
@@ -68,8 +73,8 @@ describe "score" do
     end
 
     it "scores the tighter of two matches, regardless of order" do
-      tight = "12"
-      loose = "1padding2"
+      tight = "a12"
+      loose = "a1b2"
       score(tight + loose, "12").should == 2
       score(loose + tight, "12").should == 2
     end
