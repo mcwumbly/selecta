@@ -279,9 +279,6 @@ class Score
 
       # Penalize longer matches.
       score = query.length.to_f / match_length.to_f
-
-      # Normalize vs. the length of the choice, penalizing longer strings.
-      score / choice.length
     end
 
     # Find the length of the shortest substring matching the given characters.

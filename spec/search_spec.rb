@@ -85,8 +85,8 @@ describe Search do
       config = Configuration.from_inputs(["spec/search_spec.rb", "search.rb"],
                                          Configuration.default_options)
       search = Search.blank(config)
-      search.append_search_string("search").matches.should == ["search.rb",
-                                                               "spec/search_spec.rb"]
+      search.append_search_string("search").matches.should == ["spec/search_spec.rb",
+                                                               "search.rb"]
     end
   end
 

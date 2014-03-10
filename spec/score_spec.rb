@@ -34,11 +34,11 @@ describe "score" do
       score("babababab", "aaaa").should be > 0
     end
 
-    it "scores 1, normalized to length, when the query equals the choice" do
+    it "scores 1 when the choice contains the exact substring" do
       score("a", "a").should == 1.0
-      score("ab", "ab").should == 0.5
-      score("a long string", "a long string").should == 1.0 / "a long string".length
-      score("spec/search_spec.rb", "sear").should == 1.0 / "spec/search_spec.rb".length
+      score("ab", "ab").should == 1.0
+      score("a long string", "a long string").should == 1.0
+      score("spec/search_spec.rb", "sear").should == 1.0
     end
   end
 
@@ -61,14 +61,6 @@ describe "score" do
     it "scores higher for better matches" do
       score("selecta.gemspec", "asp").should be > score("algorithm4_spec.rb", "asp")
       score("README.md", "em").should be > score("benchmark.rb", "em")
-      score("search.rb", "sear").should be > score("spec/search_spec.rb", "sear")
-    end
-
-    it "scores shorter matches higher" do
-      score("fbb", "fbb").should be > score("foo bar baz", "fbb")
-      score("foo", "foo").should be > score("longer foo", "foo")
-      score("foo", "foo").should be > score("foo longer", "foo")
-      score("1/2/3/4", "1/2/3").should be > score("1/9/2/3/4", "1/2/3")
     end
 
     it "sometimes scores longer strings higher if they have a better match" do
@@ -78,8 +70,8 @@ describe "score" do
     it "scores the tighter of two matches, regardless of order" do
       tight = "12"
       loose = "1padding2"
-      score(tight + loose, "12").should == 1.0 / (tight + loose).length
-      score(loose + tight, "12").should == 1.0 / (loose + tight).length
+      score(tight + loose, "12").should == 1.0
+      score(loose + tight, "12").should == 1.0
     end
   end
 
