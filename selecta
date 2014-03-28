@@ -254,9 +254,9 @@ class Search
     @choices.map do |choice|
       [choice, Score.score(choice, @query)]
     end.select do |choice, score|
-      score > 0.0
+      score < Float::INFINITY
     end.sort_by do |choice, score|
-      -score
+      score
     end.map do |choice, score|
       choice
     end
