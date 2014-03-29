@@ -314,7 +314,7 @@ class Score
                        if index
                          score = find_match_length(string, rest, index + 1)
                          if score
-                           this_score = index == 0 ? 1 : index - start + 1
+                           this_score = index - start + 1
                            this_score + score
                          end
                        end

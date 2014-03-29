@@ -64,8 +64,11 @@ describe "score" do
 
   describe "match quality" do
     it "scores higher for better matches" do
-      score("selecta.gemspec", "asp").should be < score("algorithm4_spec.rb", "asp")
-      score("README.md", "em").should be < score("benchmark.rb", "em")
+      score("reason", "eas").should == "eas".length
+      score("beagles", "eas").should == "eagles".length
+
+      score("README", "em").should == 4
+      score("benchmark", "em").should == 5
     end
 
     it "sometimes scores longer strings higher if they have a better match" do
@@ -80,7 +83,8 @@ describe "score" do
     end
 
     it "scores characters at word boundaries higher" do
-      score("foo/bar", "ba").should be < score("foobar", "ba")
+      score("foo/bar", "ob").should == 1
+      score("foobar", "ob").should == 2
     end
   end
 end
