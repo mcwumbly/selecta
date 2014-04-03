@@ -44,7 +44,7 @@ describe "score" do
 
   describe "character matching" do
     it "matches punctuation" do
-      score("/! symbols $^", "/!$^").should be > 0.0
+      score("/! symbols $^", "/!$^").should be < Float::INFINITY
     end
 
     it "is case insensitive" do
@@ -67,19 +67,20 @@ describe "score" do
       score("reason", "eas").should == "eas".length
       score("beagles", "eas").should == "eagles".length
 
-      score("README", "em").should == 4
-      score("benchmark", "em").should == 5
+      score("README", "em").should == "EADM".length
+      score("benchmark", "em").should == "enchm".length
     end
 
     it "sometimes scores longer strings higher if they have a better match" do
-      score("long12long", "12").should be < score("1long2", "12")
+      score("xlong12long", "12").should == "12".length
+      score("x1long2", "12").should == "1long2".length
     end
 
     it "scores the tighter of two matches, regardless of order" do
       tight = "a12"
       loose = "a1b2"
-      score(tight + loose, "12").should == 2
-      score(loose + tight, "12").should == 2
+      score(tight + loose, "12").should == "12".length
+      score(loose + tight, "12").should == "12".length
     end
 
     it "scores characters at word boundaries higher" do
