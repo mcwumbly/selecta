@@ -306,13 +306,25 @@ class Score
     end
 
     # Find each of the characters in the string, moving strictly left to right.
+    # This function recursively calls itself up to twice for each call. For
+    # each character in the string, we need to consider the possibility of
+    # scoring both the closest instance of the character and the closest
+    # instance of the character on a word boundary.
     def length_of_matching_substring(string, chars, start)
       return 0 if chars.empty?
 
       this_char, rest = chars[0], chars[1..-1]
+
+      # Compute the score with no boundary bonus.
       non_boundary = begin
+                       # Where is the next character? If it's not here, we
+                       # score nil.
                        index = string.index(this_char, start)
                        if index
+                         # What, if anything, is the recursive score for the
+                         # rest of the string? If we don't find a score, score
+                         # nil. Otherwise, score for every character between
+                         # here and the next matching character.
                          score = length_of_matching_substring(string, rest, index + 1)
                          if score
                            this_score = index - start + 1
@@ -320,10 +332,18 @@ class Score
                          end
                        end
                      end
+
+      # Compute the score with a boundary bonus. But if we didn't get a score
+      # without the bonus, there's no reason to even try.
       if non_boundary
         boundary = begin
+                     # Where is the next character next to a word boundary? If
+                     # it's not here, we score nil.
                      index = string.index(/\b#{this_char}/, start)
                      if index
+                       # Recursively score the rest of the string. This
+                       # character scores 0 since it was at a word
+                       # boundary.
                        score = length_of_matching_substring(string, rest, index + 1)
                        if score
                          score + 1
