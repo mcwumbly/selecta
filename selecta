@@ -282,23 +282,22 @@ class Score
     # Find the length of the shortest substring matching the given characters.
     # We run the scoring algorithm multiple times, starting from each
     # occurrence of the first letter in the query.
-    def score_from_best_starting_point(string, query)
-      return query.length if string.include?(query)
+    def score_from_best_starting_point(candidate, query)
+      return query.length if candidate.include?(query)
 
-      chars = query.chars
-      first_char, *rest = chars
-      first_indexes = character_occurrences_in_string(string, first_char)
+      query = query.chars
+      first_matching_indexes = character_occurrences_in_string(candidate, query[0])
 
-      first_indexes.map do |first_index|
-        score_substring(string[first_index..-1], chars)
+      first_matching_indexes.map do |first_index|
+        score_substring(candidate[first_index..-1], query)
       end.compact.min
     end
 
-    def character_occurrences_in_string(string, char)
+    def character_occurrences_in_string(candidate, char)
       index = 0
       indexes = []
       while index
-        index = string.index(char, index)
+        index = candidate.index(char, index)
         if index
           indexes << index
           index += 1
@@ -307,24 +306,28 @@ class Score
       indexes
     end
 
-    # Find each of the characters in the string, moving strictly left to right.
+    # Find each of the characters in the candidate, moving strictly left to right.
     # This function recursively calls itself up to twice for each call. For
-    # each character in the string, we need to consider the possibility of
+    # each character in the candidate, we need to consider the possibility of
     # scoring both the closest instance of the character and the closest
     # instance of the character on a word boundary.
-    def score_substring(string, chars)
-      return 0 if chars.empty?
+    #
+    # candidate: the substring that we're trying to score
+    # query: the query string as an array of characters
+    def score_substring(candidate, query)
+      return 0 if query.empty?
 
-      this_char, rest = chars[0], chars[1..-1]
+      this_query_char, query_remainder = query[0], query[1..-1]
 
       # Compute the score with no boundary bonus.
       non_boundary = begin
                        # Where is the next character? If it's not here, we
                        # score nil.
-                       index = string.index(this_char)
+                       index = candidate.index(this_query_char)
                        if index
-                         # Recursively score the rest of the string.
-                         score = score_substring(string[(index + 1)..-1], rest)
+                         # Recursively score the rest of the candidate.
+                         candidate_remainder = candidate[(index + 1)..-1]
+                         score = score_substring(candidate_remainder, query_remainder)
                          if score
                            # This character scores 1 for every character
                            # between here and the next matching character.
@@ -341,10 +344,11 @@ class Score
         boundary = begin
                      # Where is the next character next to a word boundary? If
                      # it's not here, we score nil.
-                     index = string.index(/\b#{this_char}/)
+                     index = candidate.index(/\b#{this_query_char}/)
                      if index
-                       # Recursively score the rest of the string.
-                       score = score_substring(string[(index + 1)..-1], rest)
+                       # Recursively score the rest of the candidate.
+                       candidate_remainder = candidate[(index + 1)..-1]
+                       score = score_substring(candidate_remainder, query_remainder)
 
                        if score
                          # This character scores 1 since it was at a word
