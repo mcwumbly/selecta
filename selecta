@@ -321,11 +321,11 @@ class Score
                        # score nil.
                        index = string.index(this_char)
                        if index
-                         # Recursively score the rest of the string. This
-                         # character scores 1 for every character between here
-                         # and the next matching character.
+                         # Recursively score the rest of the string.
                          score = length_of_matching_substring(string[(index + 1)..-1], rest)
                          if score
+                           # This character scores 1 for every character
+                           # between here and the next matching character.
                            this_score = index + 1
                            this_score + score
                          end
@@ -341,11 +341,12 @@ class Score
                      # it's not here, we score nil.
                      index = string.index(/\b#{this_char}/)
                      if index
-                       # Recursively score the rest of the string. This
-                       # character scores 1 since it was at a word
-                       # boundary.
+                       # Recursively score the rest of the string.
                        score = length_of_matching_substring(string[(index + 1)..-1], rest)
+
                        if score
+                         # This character scores 1 since it was at a word
+                         # boundary.
                          score + 1
                        end
                      end
