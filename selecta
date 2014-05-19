@@ -288,7 +288,7 @@ class Score
       first_indexes = find_all_character_indexes_in_string(string, first_char)
 
       first_indexes.map do |first_index|
-        length_of_matching_substring(string, chars, first_index)
+        length_of_matching_substring(string[first_index..-1], chars)
       end.compact.min
     end
 
@@ -310,7 +310,7 @@ class Score
     # each character in the string, we need to consider the possibility of
     # scoring both the closest instance of the character and the closest
     # instance of the character on a word boundary.
-    def length_of_matching_substring(string, chars, start)
+    def length_of_matching_substring(string, chars)
       return 0 if chars.empty?
 
       this_char, rest = chars[0], chars[1..-1]
@@ -319,14 +319,14 @@ class Score
       non_boundary = begin
                        # Where is the next character? If it's not here, we
                        # score nil.
-                       index = string.index(this_char, start)
+                       index = string.index(this_char)
                        if index
                          # Recursively score the rest of the string. This
                          # character scores 1 for every character between here
                          # and the next matching character.
-                         score = length_of_matching_substring(string, rest, index + 1)
+                         score = length_of_matching_substring(string[(index + 1)..-1], rest)
                          if score
-                           this_score = index - start + 1
+                           this_score = index + 1
                            this_score + score
                          end
                        end
@@ -339,12 +339,12 @@ class Score
         boundary = begin
                      # Where is the next character next to a word boundary? If
                      # it's not here, we score nil.
-                     index = string.index(/\b#{this_char}/, start)
+                     index = string.index(/\b#{this_char}/)
                      if index
                        # Recursively score the rest of the string. This
                        # character scores 1 since it was at a word
                        # boundary.
-                       score = length_of_matching_substring(string, rest, index + 1)
+                       score = length_of_matching_substring(string[(index + 1)..-1], rest)
                        if score
                          score + 1
                        end
