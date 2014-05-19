@@ -321,10 +321,9 @@ class Score
                        # score nil.
                        index = string.index(this_char, start)
                        if index
-                         # What, if anything, is the recursive score for the
-                         # rest of the string? If we don't find a score, score
-                         # nil. Otherwise, score for every character between
-                         # here and the next matching character.
+                         # Recursively score the rest of the string. This
+                         # character scores 1 for every character between here
+                         # and the next matching character.
                          score = length_of_matching_substring(string, rest, index + 1)
                          if score
                            this_score = index - start + 1
@@ -333,8 +332,9 @@ class Score
                        end
                      end
 
-      # Compute the score with a boundary bonus. But if we didn't get a score
-      # without the bonus, there's no reason to even try.
+      # If we got a score without a boundary bonus, we know all of the
+      # characters are at least present, so try to compute with a boundary
+      # bonus.
       if non_boundary
         boundary = begin
                      # Where is the next character next to a word boundary? If
@@ -342,7 +342,7 @@ class Score
                      index = string.index(/\b#{this_char}/, start)
                      if index
                        # Recursively score the rest of the string. This
-                       # character scores 0 since it was at a word
+                       # character scores 1 since it was at a word
                        # boundary.
                        score = length_of_matching_substring(string, rest, index + 1)
                        if score
