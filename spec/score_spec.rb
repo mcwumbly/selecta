@@ -84,7 +84,7 @@ describe "score" do
     end
 
     it "scores characters at word boundaries higher" do
-      score("foo/bar", "ob").should == 1
+      score("foo/bar", "ob").should == 2
       score("foobar", "ob").should == 2
     end
   end

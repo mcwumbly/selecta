@@ -324,7 +324,10 @@ class Score
         boundary = begin
                      index = string.index(/\b#{this_char}/, start)
                      if index
-                       length_of_matching_substring(string, rest, index + 1)
+                       score = length_of_matching_substring(string, rest, index + 1)
+                       if score
+                         score + 1
+                       end
                      end
                    end
       end
