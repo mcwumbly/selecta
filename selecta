@@ -274,25 +274,27 @@ class Score
       choice = choice.downcase
       query = query.downcase
 
-      match_length = shortest_matching_substring_length(choice, query)
+      match_length = score_from_best_starting_point(choice, query)
       return Float::INFINITY unless match_length
       match_length
     end
 
     # Find the length of the shortest substring matching the given characters.
-    def shortest_matching_substring_length(string, query)
+    # We run the scoring algorithm multiple times, starting from each
+    # occurrence of the first letter in the query.
+    def score_from_best_starting_point(string, query)
       return query.length if string.include?(query)
 
       chars = query.chars
       first_char, *rest = chars
-      first_indexes = find_all_character_indexes_in_string(string, first_char)
+      first_indexes = character_occurrences_in_string(string, first_char)
 
       first_indexes.map do |first_index|
-        length_of_matching_substring(string[first_index..-1], chars)
+        score_substring(string[first_index..-1], chars)
       end.compact.min
     end
 
-    def find_all_character_indexes_in_string(string, char)
+    def character_occurrences_in_string(string, char)
       index = 0
       indexes = []
       while index
@@ -310,7 +312,7 @@ class Score
     # each character in the string, we need to consider the possibility of
     # scoring both the closest instance of the character and the closest
     # instance of the character on a word boundary.
-    def length_of_matching_substring(string, chars)
+    def score_substring(string, chars)
       return 0 if chars.empty?
 
       this_char, rest = chars[0], chars[1..-1]
@@ -322,7 +324,7 @@ class Score
                        index = string.index(this_char)
                        if index
                          # Recursively score the rest of the string.
-                         score = length_of_matching_substring(string[(index + 1)..-1], rest)
+                         score = score_substring(string[(index + 1)..-1], rest)
                          if score
                            # This character scores 1 for every character
                            # between here and the next matching character.
@@ -342,7 +344,7 @@ class Score
                      index = string.index(/\b#{this_char}/)
                      if index
                        # Recursively score the rest of the string.
-                       score = length_of_matching_substring(string[(index + 1)..-1], rest)
+                       score = score_substring(string[(index + 1)..-1], rest)
 
                        if score
                          # This character scores 1 since it was at a word
