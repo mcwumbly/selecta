@@ -307,9 +307,8 @@ class Score
 
     # Find each of the characters in the string, moving strictly left to right.
     def length_of_matching_substring(string, chars, start)
-      if chars.empty?
-        return 0
-      end
+      return 0 if chars.empty?
+
       this_char, rest = chars[0], chars[1..-1]
       non_boundary = begin
                        index = string.index(this_char, start)
