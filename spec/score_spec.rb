@@ -83,9 +83,24 @@ describe "score" do
       score(loose + tight, "12").should == "12".length
     end
 
-    it "scores characters at word boundaries higher" do
-      score("foo/bar", "ob").should == 2
-      score("foobar", "ob").should == 2
+    describe "at word boundaries" do
+      it "doesn't score characters before a match at a word boundary" do
+        score("fooxbar", "foobar").should == 7
+        score("foo-x-bar", "foobar").should == 6
+        #score("xa-ay", "xy").should == 4
+      end
+
+      xit "finds optimal non-boundary matches when boundary matches are present" do
+        # The "xay" matches in both cases because it's shorter than "xaa-aay"
+        # even considering the latter's boundary bonus.
+        score("xay/xaa-aay", "xy").should == 3
+        score("xaa-aay/xay", "xy").should == 3
+      end
+
+      xit "finds optimal boundary matches when non-boundary matches are present" do
+        score("xa-ay/xaaaay", "xy").should == 4
+        score("xaaaay/xa-ay", "xy").should == 4
+      end
     end
   end
 end
