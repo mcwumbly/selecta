@@ -306,9 +306,9 @@ class Score
       indexes
     end
 
-    # Find each of the characters in the candidate, moving strictly left to right.
-    # This function recursively calls itself up to twice for each call. For
-    # each character in the candidate, we need to consider the possibility of
+    # Find each of the characters in the candidate, moving strictly left to
+    # right. This function recursively calls itself up to twice for each call.
+    # For each character in the query, we need to consider the possibility of
     # scoring both the closest instance of the character and the closest
     # instance of the character on a word boundary.
     #
