@@ -344,7 +344,7 @@ class Score
         boundary = begin
                      # Where is the next character next to a word boundary? If
                      # it's not here, we score nil.
-                     index = candidate.index(/\b#{this_query_char}/)
+                     index = candidate.index(/(^|\b)#{this_query_char}/)
                      if index
                        # Recursively score the rest of the candidate.
                        candidate_remainder = candidate[(index + 1)..-1]

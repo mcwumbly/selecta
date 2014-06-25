@@ -90,16 +90,16 @@ describe "score" do
         #score("xa-ay", "xy").should == 4
       end
 
-      xit "finds optimal non-boundary matches when boundary matches are present" do
+      it "finds optimal non-boundary matches when boundary matches are present" do
         # The "xay" matches in both cases because it's shorter than "xaa-aay"
         # even considering the latter's boundary bonus.
         score("xay/xaa-aay", "xy").should == 3
         score("xaa-aay/xay", "xy").should == 3
       end
 
-      xit "finds optimal boundary matches when non-boundary matches are present" do
-        score("xa-ay/xaaaay", "xy").should == 4
-        score("xaaaay/xa-ay", "xy").should == 4
+      it "finds optimal boundary matches when non-boundary matches are present" do
+        score("xa-yaz/xaaaayz", "xyz").should == 4
+        score("xaaaayz/xa-yaz", "xyz").should == 4
       end
     end
   end
