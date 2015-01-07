@@ -274,9 +274,56 @@ class Score
       choice = choice.downcase
       query = query.downcase
 
-      match_length = score_from_best_starting_point(choice, query)
+      #match_length = score_from_best_starting_point(choice, query)
+      match_length = compute_match_length(choice, query)
       return Float::INFINITY unless match_length
       match_length
+    end
+
+    # via aaron jensen
+    # https://gist.github.com/aaronjensen/f9599dab32d49c1702d6
+    def compute_match_length(choice, query)
+      return query.length if choice.index(query)
+      query_chars = query.chars
+
+      max = choice.length + 1
+      scores = {}
+      each_index_of_char(choice, query_chars[0]) do |index|
+        scores[index] = 1
+      end
+
+      query_chars.drop(1).each do |next_char|
+        return if scores.empty?
+        new_scores = Hash.new(max)
+        first_index = scores.keys.min
+
+        each_index_of_char(choice, next_char, first_index + 1) do |next_char_index, boundary|
+          scores.each do |index, score|
+            next unless next_char_index > index
+
+            score_delta = boundary ? 1 : (next_char_index - index)
+            new_score = score + score_delta
+            new_scores[next_char_index] = new_score if new_score < new_scores[next_char_index]
+          end
+        end
+
+        scores = new_scores
+      end
+
+      scores.values.min
+    end
+
+
+    def each_index_of_char(str, char, start = 0)
+      index = str.index(char, start)
+
+      while index
+        prev = index - 1
+        boundary = start > 0 && str.index(/\W/, prev) == prev
+        yield index, boundary
+
+        index = str.index(char, index + 1)
+      end
     end
 
     # Find the length of the shortest substring matching the given characters.

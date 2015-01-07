@@ -101,6 +101,14 @@ describe "score" do
         score("xa-yaz/xaaaayz", "xyz").should == 4
         score("xaaaayz/xa-yaz", "xyz").should == 4
       end
+
+      it "finds optimal matches when boundary and non-boundary matches are present" do
+        score("x-x-y-y-z-z", "xyz").should == 3
+        score("xayazxayz", "xyz").should == 4
+        score("x/yaaaz/yz", "xyz").should == 3
+        score("x/yaz/y/aaaaz/z", "xyz").should == 3
+        score("x/yaaz/yaz/ayz", "xyz").should == 4
+      end
     end
   end
 end
